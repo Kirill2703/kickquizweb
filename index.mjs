@@ -296,24 +296,30 @@ bot.onText(/\/createprediction/, async (msg) => {
       bot.once("message", async (msg) => {
         const team2 = msg.text;
 
-        bot.sendMessage(chatId, "Enter the match date (YYYY-MM-DD):");
+        bot.sendMessage(chatId, "Input the country of match");
 
         bot.once("message", async (msg) => {
-          const date = new Date(msg.text);
+          const country = msg.text;
 
-          try {
-            await Prediction.create({ team1, draw, team2, date });
-            bot.sendMessage(
-              chatId,
-              `Prediction for ${team1} vs ${team2} created!`
-            );
-          } catch (error) {
-            console.error("Error creating prediction:", error);
-            bot.sendMessage(
-              chatId,
-              "Error creating prediction. Please try again."
-            );
-          }
+          bot.sendMessage(chatId, "Enter the match date (YYYY-MM-DD):");
+
+          bot.once("message", async (msg) => {
+            const date = new Date(msg.text);
+
+            try {
+              await Prediction.create({ team1, draw, team2, date, country });
+              bot.sendMessage(
+                chatId,
+                `Prediction for ${team1} vs ${team2} created! Country: ${country}`
+              );
+            } catch (error) {
+              console.error("Error creating prediction:", error);
+              bot.sendMessage(
+                chatId,
+                "Error creating prediction. Please try again."
+              );
+            }
+          });
         });
       });
     });

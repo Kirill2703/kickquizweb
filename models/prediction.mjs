@@ -16,6 +16,10 @@ const predictionSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  country: {
+    type: String,
+    required: true,
+  },
   result: {
     type: String, // Результат матча
   },
