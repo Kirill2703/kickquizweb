@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const userPredictionSchema = new mongoose.Schema({
-  userId: {
+  username: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
