@@ -11,12 +11,13 @@ const userPredictionSchema = new mongoose.Schema({
     ref: "Prediction",
     required: true,
   },
-  betPoints: {
-    type: Number,
-    required: true,
-  },
+  // betPoints: {
+  //   type: Number,
+  //   required: true,
+  // },
   selectedTeam: {
-    type: String, // Хранит команду, которую пользователь выбрал
+    type: String,
+    required: true// Хранит команду, которую пользователь выбрал
   },
   // status: {
   //   type: String, // Например, "win" или "lose"
