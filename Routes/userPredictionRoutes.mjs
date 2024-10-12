@@ -7,6 +7,12 @@ const router = express.Router();
 router.post("/create", async (req, res) => {
   try {
     const { userId, predictionId, selectedTeam } = req.body;
+
+    const existingPrediction = await UserPrediction.findOne({
+      userId,
+      predictionId,
+    });
+
     if (existingPrediction) {
       return res
         .status(400)
