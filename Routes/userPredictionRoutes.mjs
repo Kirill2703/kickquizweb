@@ -6,7 +6,7 @@ const router = express.Router();
 // Создать предсказание пользователя
 router.post("/create", async (req, res) => {
   try {
-    const { userId, prediction, selectedTeam } = req.body;
+    const { userId, predictionId, selectedTeam } = req.body;
     if (existingPrediction) {
       return res
         .status(400)
@@ -16,7 +16,7 @@ router.post("/create", async (req, res) => {
     // Создаем новый прогноз для пользователя
     const newUserPrediction = await UserPrediction.create({
       userId,
-      prediction,
+      predictionId,
       selectedTeam,
     });
 
