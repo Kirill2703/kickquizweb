@@ -15,12 +15,12 @@ const userPredictionSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  guessedWinner: {
+  selectedTeam: {
     type: String, // Хранит команду, которую пользователь выбрал
   },
-  status: {
-    type: String, // Например, "win" или "lose"
-  },
+  // status: {
+  //   type: String, // Например, "win" или "lose"
+  // },
 });
 
 const UserPrediction = mongoose.model("UserPrediction", userPredictionSchema);

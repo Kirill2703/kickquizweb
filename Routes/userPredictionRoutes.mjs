@@ -6,12 +6,20 @@ const router = express.Router();
 // Создать предсказание пользователя
 router.post("/create", async (req, res) => {
   try {
-    const { userId, quizId, prediction } = req.body;
+    const { userId, prediction, selectedTeam } = req.body;
+    if (existingPrediction) {
+      return res
+        .status(400)
+        .json({ message: "Вы уже сделали прогноз на этот матч" });
+    }
+
+    // Создаем новый прогноз для пользователя
     const newUserPrediction = await UserPrediction.create({
       userId,
-      quizId,
       prediction,
+      selectedTeam,
     });
+
     res.status(201).json(newUserPrediction);
   } catch (error) {
     res.status(500).json({ error: error.message });
