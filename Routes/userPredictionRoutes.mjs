@@ -6,24 +6,8 @@ const router = express.Router();
 
 router.post("/create", async (req, res) => {
   try {
-    const { username, predictionId, selectedTeam } = req.body;
+    const { username, predictionId, selectedTeam, betPoints } = req.body;
 
-    // Логируем входящие данные
-    console.log("Полученные данные для создания прогноза:", {
-      username,
-      predictionId,
-      selectedTeam,
-    });
-
-    if (!username || !predictionId || !selectedTeam) {
-      console.warn("Ошибка: Пропущены обязательные поля.");
-      return res
-        .status(400)
-        .json({ message: "Все поля должны быть заполнены." });
-    }
-
-    // Найдите пользователя по имени
-    console.log("Поиск пользователя с именем:", username);
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -31,10 +15,10 @@ router.post("/create", async (req, res) => {
       return res.status(404).json({ message: "Пользователь не найден." });
     }
 
-    // Логируем найденного пользователя
-    console.log("Найден пользователь:", user);
+    if (user.points < 0) {
+      return res.status(400).json({ message: "Недостаточно очков для ставки" });
+    }
 
-    // Проверка, существует ли прогноз для этого пользователя
     const existingPrediction = await UserPrediction.findOne({
       username: user._id,
       predictionId,
@@ -55,6 +39,7 @@ router.post("/create", async (req, res) => {
       predictionId,
       selectedTeam,
       usernameString: user.username, // Храним строковое имя пользователя
+      betPoints,
     });
 
     // Логируем успешно созданный прогноз
@@ -66,6 +51,8 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 // Получить все предсказания пользователей
 router.get("/", async (req, res) => {
