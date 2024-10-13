@@ -62,7 +62,7 @@ router.post("/create", async (req, res) => {
       `Очки пользователя "${user.username}" обновлены. Осталось очков: ${updatedUser.points}`
     );
 
-    res.status(201).json(newUserPrediction);
+    res.status(201).json({ newUserPrediction, updatedUser });
   } catch (error) {
     console.error("Ошибка при создании прогноза:", error.message);
     res.status(500).json({ error: error.message });
