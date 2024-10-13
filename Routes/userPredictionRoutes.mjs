@@ -52,6 +52,16 @@ router.post("/create", async (req, res) => {
     // Логируем успешно созданный прогноз
     console.log("Новый прогноз успешно создан:", newUserPrediction);
 
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { $inc: { points: -betPoints } }, // Списываем очки
+      { new: true } // Возвращаем обновленного пользователя
+    );
+
+    console.log(
+      `Очки пользователя "${user.username}" обновлены. Осталось очков: ${updatedUser.points}`
+    );
+
     res.status(201).json(newUserPrediction);
   } catch (error) {
     console.error("Ошибка при создании прогноза:", error.message);
