@@ -8,14 +8,21 @@ router.post("/create", async (req, res) => {
   try {
     const { username, predictionId, selectedTeam, betPoints } = req.body;
 
+    if (!betPoints) {
+      return res
+        .status(400)
+        .json({ message: "Количество очков для ставки не указано" });
+    }
+
     const user = await User.findOne({ username });
 
     if (!user) {
       console.warn(`Пользователь с именем "${username}" не найден.`);
       return res.status(404).json({ message: "Пользователь не найден." });
     }
+    
 
-    if (user.points < 0) {
+    if (user.points < betPoints) {
       return res.status(400).json({ message: "Недостаточно очков для ставки" });
     }
 
