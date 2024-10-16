@@ -109,18 +109,18 @@ router.post("/updateresult", async (req, res) => {
 });
 
 router.get("/history/:username", async (req, res) => {
-  const username = req.params;
+  const username = req.params.username;
 
   try {
-    const userPrediction = await UserPrediction.find({ username });
+    const userPrediction = await UserPrediction.find({ usernameString: username });
 
-    if (!userPredictions.length) {
+    if (!userPrediction.length) {
       return res.status(404).json({ message: "История прогнозов пуста." });
     }
 
-    const prediction = await Promise.all(
+    const predictions = await Promise.all(
       userPrediction.map(async (userPrediction) => {
-        const predictionId = await Prediction.findById(
+        const prediction = await Prediction.findById(
           userPrediction.predictionId
         );
         return {
@@ -153,7 +153,7 @@ function getOutcome(prediction, userPrediction) {
     if (team1Goals === team2Goals) return "draw";
     return "Lose";
   }
-  
+
   return "Lose";
 }
 
