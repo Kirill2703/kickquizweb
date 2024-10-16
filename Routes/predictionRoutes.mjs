@@ -108,4 +108,53 @@ router.post("/updateresult", async (req, res) => {
   }
 });
 
+router.get("/history/:username", async (req, res) => {
+  const username = req.params;
+
+  try {
+    const userPrediction = await UserPrediction.find({ username });
+
+    if (!userPredictions.length) {
+      return res.status(404).json({ message: "История прогнозов пуста." });
+    }
+
+    const prediction = await Promise.all(
+      userPrediction.map(async (userPrediction) => {
+        const predictionId = await Prediction.findById(
+          userPrediction.predictionId
+        );
+        return {
+          ...userPrediction._doc,
+          match: `${prediction.team1} vs ${prediction.team2}`,
+          result: prediction.result,
+          outcome: getOutcome,
+        };
+      })
+    );
+    res.status(200).json(predictions);
+  } catch (error) {
+    console.error("Ошибка при получении истории прогнозов:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+function getOutcome(prediction, userPrediction) {
+  const [team1Goals, team2Goals] = prediction.result.split("-").map(Number);
+  const userSelectedTeam = userPrediction.selectedTeam;
+
+  if (userSelectedTeam === prediction.team1) {
+    if (team1Goals > team2Goals) return "Win";
+    if (team1Goals === team2Goals) return "draw";
+    return "Lose";
+  }
+
+  if (userSelectedTeam === prediction.team2) {
+    if (team2Goals > team1Goals) return "Win";
+    if (team1Goals === team2Goals) return "draw";
+    return "Lose";
+  }
+  
+  return "Lose";
+}
+
 export default router;
