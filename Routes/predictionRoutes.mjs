@@ -105,41 +105,33 @@ router.post("/updateresult", async (req, res) => {
 router.get("/history/:username", async (req, res) => {
   const username = req.params.username;
 
-  function getOutcome(prediction, userPrediction) {
-    const [team1Goals, team2Goals] = prediction.result.split("-").map(Number);
-    const userSelectedTeam = userPrediction.selectedTeam;
-
-    if (userSelectedTeam === prediction.team1) {
-      if (team1Goals > team2Goals) return "Win";
-      if (team1Goals === team2Goals) return "draw";
-      return "Lose";
-    }
-
-    if (userSelectedTeam === prediction.team2) {
-      if (team2Goals > team1Goals) return "Win";
-      if (team1Goals === team2Goals) return "draw";
-      return "Lose";
-    }
-
-    return "Lose";
-  }
-
-
   try {
+    console.log(`Получаем историю для пользователя: ${username}`);
     const userPrediction = await UserPrediction.find({
       usernameString: username,
     });
+    console.log("Найдены прогнозы пользователя:", userPrediction);
 
     if (!userPrediction.length) {
+      console.log("История прогнозов пуста");
       return res.status(404).json({ message: "История прогнозов пуста." });
     }
 
     const predictions = await Promise.all(
       userPrediction.map(async (userPrediction) => {
+        console.log(`Обрабатываем прогноз с ID ${userPrediction.predictionId}`);
         const prediction = await Prediction.findById(
           userPrediction.predictionId
         );
+        if (!prediction) {
+          console.error(
+            `Прогноз с ID ${userPrediction.predictionId} не найден`
+          );
+          throw new Error("Прогноз не найден");
+        }
         const outcome = getOutcome(prediction, userPrediction);
+        console.log("Результат матча:", prediction.result);
+        console.log("Исход прогноза:", outcome);
         return {
           ...userPrediction._doc,
           match: `${prediction.team1} vs ${prediction.team2}`,
@@ -155,5 +147,23 @@ router.get("/history/:username", async (req, res) => {
   }
 });
 
+function getOutcome(prediction, userPrediction) {
+  const [team1Goals, team2Goals] = prediction.result.split("-").map(Number);
+  const userSelectedTeam = userPrediction.selectedTeam;
+
+  if (userSelectedTeam === prediction.team1) {
+    if (team1Goals > team2Goals) return "Win";
+    if (team1Goals === team2Goals) return "draw";
+    return "Lose";
+  }
+
+  if (userSelectedTeam === prediction.team2) {
+    if (team2Goals > team1Goals) return "Win";
+    if (team1Goals === team2Goals) return "draw";
+    return "Lose";
+  }
+
+  return "Lose";
+}
 
 export default router;
