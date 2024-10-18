@@ -72,8 +72,6 @@ router.post("/create", async (req, res) => {
 
 
 
-
-
 // Получить все предсказания пользователей
 router.get("/", async (req, res) => {
   try {

@@ -136,7 +136,7 @@ router.get("/history/:username", async (req, res) => {
           ...userPrediction._doc,
           match: `${prediction.team1} vs ${prediction.team2}`,
           result: prediction.result,
-          outcome,
+          outcome
         };
       })
     );
@@ -148,6 +148,11 @@ router.get("/history/:username", async (req, res) => {
 });
 
 function getOutcome(prediction, userPrediction) {
+  const result = prediction.result;
+
+  if (!result) {
+    return "Pending";
+  }
   const [team1Goals, team2Goals] = prediction.result.split("-").map(Number);
   const userSelectedTeam = userPrediction.selectedTeam;
 
