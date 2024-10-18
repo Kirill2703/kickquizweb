@@ -63,12 +63,6 @@ router.post("/updateresult", async (req, res) => {
           await User.findByIdAndUpdate(userPrediction.username, {
             $inc: { points: betPoints * 2 },
           }); // Умножаем на 2 за правильный прогноз
-          if (!userUpdateResult) {
-            console.error(
-              `Ошибка: Пользователь с ID ${userPrediction.username} не найден.`
-            );
-            continue; // Пропускаем этот прогноз и продолжаем с другими
-          }
         } else if (team1Goals === team2Goals) {
           // Ничья
           await User.findByIdAndUpdate(userPrediction.username, {
