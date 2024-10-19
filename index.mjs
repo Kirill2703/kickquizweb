@@ -8,7 +8,7 @@ import Question from "./models/question.mjs";
 import UserPrediction from "./models/userPrediction.mjs";
 import UserQuizProgress from "./models/userQuizProgress.mjs";
 import User from "./models/users.mjs";
-import quizRoutes from "./Routes/quizRoutes.mjs"
+import quizRoutes from "./Routes/quizRoutes.mjs";
 import predictionRoutes from "./Routes/predictionRoutes.mjs";
 import questionRoutes from "./Routes/questionRoutes.mjs";
 import userPredictionRoutes from "./Routes/userPredictionRoutes.mjs";
@@ -17,8 +17,6 @@ import userRoutes from "./Routes/userRoutes.mjs";
 import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
-
-
 
 dotenv.config();
 
@@ -43,9 +41,9 @@ dbConnect.on("connected", () => {
   console.log("Connected DB");
 });
 
-app.use(cors())
+app.use(cors());
 
-app.use('/api/quiz', quizRoutes)
+app.use("/api/quiz", quizRoutes);
 app.use("/api/prediction", predictionRoutes);
 app.use("/api/question", questionRoutes);
 app.use("/api/user-prediction", userPredictionRoutes);
@@ -83,13 +81,17 @@ bot.on("message", async (msg) => {
 
     // Обработка команды /start
     if (text === "/start") {
-      await bot.sendMessage(chatId, `Welcome, ${user.username} Please choose an option:`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "Choose form!", web_app: { url: webAppUrl } }],
-          ],
-        },
-      });
+      await bot.sendMessage(
+        chatId,
+        `Welcome, ${user.username} Please choose an option:`,
+        {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "Choose form!", web_app: { url: webAppUrl } }],
+            ],
+          },
+        }
+      );
     }
   } catch (error) {
     console.error("Error handling /start command:", error);
@@ -110,26 +112,47 @@ bot.onText(/\/createquiz/, async (msg) => {
   bot.once("message", async (msg) => {
     const title = msg.text;
 
-    bot.sendMessage(chatId, "Enter the quiz start date (YYYY-MM-DD):");
+    bot.sendMessage(chatId, "Enter the quiz complexity:");
 
     bot.once("message", async (msg) => {
-      const startDate = msg.text;
+      const complexity = msg.text;
 
-      bot.sendMessage(chatId, "Enter the duration of the quiz in days:");
+      bot.sendMessage(chatId, "Enter the quantity points for quiz");
 
       bot.once("message", async (msg) => {
-        const durationDays = parseInt(msg.text, 10);
+        const quantityPoints = msg.text;
 
-        try {
-          const quiz = await Quiz.create({ title, startDate, durationDays });
+        bot.sendMessage(chatId, "Enter the quantity questions in quiz");
+
+        bot.once("message", async (msg) => {
+          const quantityQuestions = msg.text;
+
           bot.sendMessage(
             chatId,
-            `Quiz '${quiz.title}' created successfully! Use /addquestion to add questions.`
+            "Enter the date for when quiz is availabel (YYYY-MM-DD): "
           );
-        } catch (error) {
-          console.error("Error creating quiz:", error);
-          bot.sendMessage(chatId, "Error creating quiz. Please try again.");
-        }
+
+          bot.once("message", async (msg) => {
+            const available = new Date(msg.text);
+
+            try {
+              const quiz = await Quiz.create({
+                title,
+                complexity,
+                quantityPoints,
+                quantityQuestions,
+                available,
+              });
+              bot.sendMessage(
+                chatId,
+                `Quiz '${quiz.title}' created successfully! Use /addquestion to add questions.`
+              );
+            } catch (error) {
+              console.error("Error creating quiz:", error);
+              bot.sendMessage(chatId, "Error creating quiz. Please try again.");
+            }
+          });
+        });
       });
     });
   });
@@ -265,8 +288,6 @@ const askQuestion = async (chatId, question, userId, quizId, day) => {
   });
 };
 
-
-
 // Команда /createprediction
 bot.onText(/\/createprediction/, async (msg) => {
   const chatId = msg.chat.id;
@@ -335,7 +356,7 @@ bot.onText(/\/bet/, async (msg) => {
   if (!user || user.points <= 0) {
     return bot.sendMessage(
       chatId,
-      "You don't have enough points to place a bet."  
+      "You don't have enough points to place a bet."
     );
   }
 

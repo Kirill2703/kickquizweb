@@ -6,8 +6,15 @@ const router = express.Router();
 // Создать новый квиз
 router.post("/create", async (req, res) => {
   try {
-    const { title, startDate, durationDays } = req.body;
-    const newQuiz = await Quiz.create({ title, startDate, durationDays });
+    const { title, complexity, quantityPoints, qantityQuestions, available } =
+      req.body;
+    const newQuiz = await Quiz.create({
+      title,
+      complexity,
+      quantityPoints,
+      qantityQuestions,
+      available,
+    });
     res.status(201).json(newQuiz);
   } catch (error) {
     res.status(500).json({ error: error.message });

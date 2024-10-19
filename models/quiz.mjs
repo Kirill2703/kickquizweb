@@ -5,14 +5,22 @@ const quizSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  startDate: {
-    type: Date,
+  complexity: {
+    type: String,
     required: true,
   },
-  durationDays: {
+  quantityPoints: {
     type: Number,
     required: true,
   },
+  qantityQuestions: {
+    type: Number,
+    required: true,
+  },
+  available: {
+    type: Date,
+    required: true
+  }
 });
 
 const Quiz = mongoose.model("Quiz", quizSchema);
