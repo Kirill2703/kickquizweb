@@ -43,5 +43,41 @@ router.get("/:chatId", async (req, res) => {
   }
 });
 
+router.post("/updatepointsquiz", async (req, res) => {
+  try {
+    const { chatId, correctAnswers, quizId } = req.body;
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+
+    let pointsToAdd = 0;
+    const quantityPoints = quiz.quantityPoints;
+
+    if (correctAnswers === 4) {
+      pointsToAdd = quantityPoints;
+    } else if (correctAnswers === 3) {
+      pointsToAdd = Math.floor((quantityPoints * 75) / 100);
+    } else if (correctAnswers === 2) {
+      pointsToAdd = Math.floor((quantityPoints * 50) / 100);
+    } else if (correctAnswers === 1) {
+      pointsToAdd = Math.floor((quantityPoints * 25) / 100);
+    }
+
+    // Обновляем очки пользователя
+    const user = await User.findById(chatId);
+    if (user) {
+      user.points += pointsToAdd;
+      await user.save();
+      return res.status(200).json({ points: user.points });
+    }
+
+    return res.status(404).json({ error: "User not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 export default router;

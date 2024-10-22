@@ -19,8 +19,8 @@ const quizSchema = new mongoose.Schema({
   },
   available: {
     type: Date,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const Quiz = mongoose.model("Quiz", quizSchema);

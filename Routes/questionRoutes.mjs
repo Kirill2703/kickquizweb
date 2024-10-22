@@ -3,15 +3,15 @@ import Question from "../models/question.mjs";
 
 const router = express.Router();
 
-// Создать новый вопрос
 router.post("/create", async (req, res) => {
   try {
-    const { quizId, text, options, correctOption } = req.body;
+    const { quizId, questionText, options, correctAnswer, points } = req.body;
     const newQuestion = await Question.create({
       quizId,
-      text,
+      questionText,
       options,
-      correctOption,
+      correctAnswer,
+      points,
     });
     res.status(201).json(newQuestion);
   } catch (error) {
@@ -19,10 +19,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Получить все вопросы
-router.get("/", async (req, res) => {
+
+router.get("/:quizId", async (req, res) => {
   try {
-    const questions = await Question.find();
+    const { quizId } = req.params;
+    const questions = await Question.find({ quizId });
     res.status(200).json(questions);
   } catch (error) {
     res.status(500).json({ error: error.message });

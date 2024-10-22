@@ -1,12 +1,13 @@
 import express from "express";
 import Quiz from "../models/quiz.mjs";
+import User from "../models/users.mjs";
 
 const router = express.Router();
 
-// Создать новый квиз
+
 router.post("/create", async (req, res) => {
   try {
-    const { title, complexity, quantityPoints, qantityQuestions, available } =
+    const { title, complexity, quantityPoints, qantityQuestions, available, winPoints } =
       req.body;
     const newQuiz = await Quiz.create({
       title,
@@ -14,6 +15,7 @@ router.post("/create", async (req, res) => {
       quantityPoints,
       qantityQuestions,
       available,
+      winPoints
     });
     res.status(201).json(newQuiz);
   } catch (error) {
@@ -41,5 +43,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
 
 export default router;
