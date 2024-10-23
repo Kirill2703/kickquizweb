@@ -5,13 +5,12 @@ const router = express.Router();
 
 router.post("/create", async (req, res) => {
   try {
-    const { quizId, questionText, options, correctAnswer, points } = req.body;
+    const { quizId, questionText, options, correctAnswer } = req.body;
     const newQuestion = await Question.create({
       quizId,
       questionText,
       options,
       correctAnswer,
-      points,
     });
     res.status(201).json(newQuestion);
   } catch (error) {

@@ -15,11 +15,7 @@ const questionSchema = new mongoose.Schema({
   correctAnswer: {
     type: String,
     required: true,
-  },
-  points: {
-    type: Number,
-    required: true,
-  },
+  }
 });
 
 const Question = mongoose.model("Question", questionSchema);
